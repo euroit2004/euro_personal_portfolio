@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euro (ยูโร) | Developer & Automation Builder</title>
+    
+    <!-- โหลด Tailwind CSS สำหรับตกแต่งหน้าเว็บให้สวยงามและ Responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- โหลด Google Fonts: Inter สำหรับภาษาอังกฤษ และ Prompt สำหรับภาษาไทย -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- โหลด Font Awesome สำหรับไอคอนต่างๆ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        // ตั้งค่า Tailwind ให้รองรับฟอนต์ที่เราโหลดมา
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Prompt', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <!-- องค์ประกอบแสงฟุ้งด้านหลัง (Ambient Background Orbs) เพื่อขับให้การ์ด Glassmorphism ดูมีมิติ -->
+    <div class="fixed inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
+        <div class="absolute top-1/4 left-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-indigo-600/30 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob"></div>
+        <div class="absolute top-1/3 right-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-cyan-500/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-8 left-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-3xl opacity-70 animate-blob" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- กล่องแจ้งเตือนแบบ Toast (แทนการใช้ alert() ตามหลัก UX สมัยใหม่) -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-800/90 backdrop-blur-md border border-indigo-500/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+            <span id="toast-message" class="text-sm font-medium">คัดลอกข้อมูลเรียบร้อยแล้ว!</span>
+        </div>
+    </div>
+
+    <!-- การ์ดหลัก (Main Glassmorphism Card) -->
+    <main class="relative z-10 w-full max-w-xl bg-slate-900/60 backdrop-blur-xl border border-slate-700/60 rounded-3xl p-6 sm:p-10 shadow-2xl transition-all duration-300 hover:border-slate-600/80">
+        
+        <!-- ส่วนหัว: สถานะออนไลน์ และ ปุ่มทักทาย -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Deployed on Cloud
+            </div>
+            
+            <button onclick="sayHello()" class="text-xs sm:text-sm px-3.5 py-1.5 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                <span>👋 ทักทายยูโร</span>
+            </button>
+        </div>
+
+        <!-- ส่วนโปรไฟล์: รูป Avatar, ชื่อ และตำแหน่ง -->
+        <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 mb-8">
+            <!-- รูปโปรไฟล์จำลอง (ใช้ Placeholder พร้อม Fallback) -->
+            <div class="relative group shrink-0">
+                <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-500"></div>
+                <img 
+                    src="https://placehold.co/160x160/1e293b/38bdf8?text=EURO" 
+                    onerror="this.onerror=null; this.src='https://placehold.co/160x160/0f172a/ffffff?text=Dev';"
+                    alt="Euro Profile" 
+                    class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-slate-800 shadow-lg"
+                >
+            </div>
+
+            <div class="flex-1">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-1">
+                    Euro <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">(ยูโร)</span>
+                </h1>
+                <p class="text-indigo-300 font-medium text-sm sm:text-base mb-3">
+                    Apps Script Specialist & Cloud Web Explorer
+                </p>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    สวัสดีครับ! ผมยูโร ปกติชอบเขียน Google Apps Script และจัดการระบบ Automation บน Google Sheets ตอนนี้กำลังก้าวเข้าสู่โลกของการทำ Web App เต็มรูปแบบบน Cloud ผ่าน GitHub 🚀
+                </p>
+            </div>
+        </div>
+
+        <!-- ส่วนทักษะ (Tech Stack Tags) -->
+        <div class="mb-8">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Tech Stack & Tools</h2>
+            <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 rounded-xl bg-slate-800/70 border border-slate-700/70 text-slate-300 text-xs font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-table text-emerald-400"></i> Google Apps Script
+                </span>
+                <span class="px-3 py-1.5 rounded-xl bg-slate-800/70 border border-slate-700/70 text-slate-300 text-xs font-medium flex items-center gap-1.5">
+                    <i class="fa-brands fa-html5 text-orange-400"></i> HTML5 / Tailwind
+                </span>
+                <span class="px-3 py-1.5 rounded-xl bg-slate-800/70 border border-slate-700/70 text-slate-300 text-xs font-medium flex items-center gap-1.5">
+                    <i class="fa-brands fa-js text-yellow-400"></i> JavaScript
+                </span>
+                <span class="px-3 py-1.5 rounded-xl bg-slate-800/70 border border-slate-700/70 text-slate-300 text-xs font-medium flex items-center gap-1.5">
+                    <i class="fa-brands fa-github text-white"></i> GitHub Pages
+                </span>
+            </div>
+        </div>
+
+        <!-- ส่วนลิงก์ผลงาน / ปุ่มโต้ตอบ (Interactive Links & Actions) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" 
+               class="group flex items-center justify-between p-4 rounded-2xl bg-slate-800/50 hover:bg-indigo-600/20 border border-slate-700/60 hover:border-indigo-500/50 transition-all duration-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 group-hover:bg-indigo-500/20 flex items-center justify-center text-slate-300 group-hover:text-indigo-400 transition-colors">
+                        <i class="fa-brands fa-github text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-semibold text-white">GitHub Profile</div>
+                        <div class="text-xs text-slate-400">ดู Source Code โปรเจกต์</div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-indigo-400 text-xs transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+            </a>
+
+            <button onclick="copyContact()" 
+               class="group flex items-center justify-between p-4 rounded-2xl bg-slate-800/50 hover:bg-cyan-600/20 border border-slate-700/60 hover:border-cyan-500/50 transition-all duration-200 text-left cursor-pointer">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 group-hover:bg-cyan-500/20 flex items-center justify-center text-slate-300 group-hover:text-cyan-400 transition-colors">
+                        <i class="fa-solid fa-envelope text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-semibold text-white">คัดลอกอีเมลติดต่อ</div>
+                        <div class="text-xs text-slate-400" id="email-text">euro.dev@example.com</div>
+                    </div>
+                </div>
+                <i class="fa-regular fa-copy text-slate-500 group-hover:text-cyan-400 text-sm"></i>
+            </button>
+        </div>
+
+        <!-- ส่วนท้าย (Footer) -->
+        <div class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <span>© 2026 Euro. All rights reserved.</span>
+            <span id="visit-counter" class="text-slate-400">เข้าชมหน้านี้แล้ว: 1 ครั้ง</span>
+        </div>
+    </main>
+
+    <!-- ส่วน JavaScript สำหรับเพิ่มลูกเล่นโต้ตอบ -->
+    <script>
+        // ฟังก์ชันแสดงกล่องข้อความแจ้งเตือน (Toast Notification)
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            
+            toastMsg.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // ฟังก์ชันปุ่มทักทายแบบสุ่มข้อความ
+        function sayHello() {
+            const greetings = [
+                "สวัสดีครับ! ยินดีต้อนรับสู่เว็บแรกบน Cloud ของยูโร 🎉",
+                "จาก Google Apps Script สู่ GitHub Pages สำเร็จแล้ว! 🚀",
+                "ขอบคุณที่แวะเข้ามาเยี่ยมชมนะครับ 👋",
+                "โค้ดนี้รันอยู่บน Cloud แบบ 100% เลยครับ ✨"
+            ];
+            const randomMsg = greetings[Math.floor(Math.random() * greetings.length)];
+            showToast(randomMsg);
+        }
+
+        // ฟังก์ชันคัดลอกอีเมลลงคลิปบอร์ด (รองรับการทำงานใน iFrame)
+        function copyContact() {
+            const emailText = document.getElementById('email-text').textContent;
+            const tempInput = document.createElement('input');
+            tempInput.value = emailText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast(`คัดลอก "${emailText}" เรียบร้อยแล้ว!`);
+            } catch (err) {
+                showToast('ไม่สามารถคัดลอกได้ กรุณาลองใหม่อีกครั้ง');
+            }
+            
+            document.body.removeChild(tempInput);
+        }
+
+        // นับจำนวนการเข้าชมจำลองด้วย localStorage เมื่อโหลดหน้าเว็บ
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                let count = localStorage.getItem('euro_page_visits') || 0;
+                count = parseInt(count) + 1;
+                localStorage.setItem('euro_page_visits', count);
+                document.getElementById('visit-counter').textContent = `คุณเปิดหน้านี้แล้ว: ${count} ครั้ง`;
+            } catch (e) {
+                // กรณีเบราว์เซอร์บล็อก localStorage ให้แสดงค่าเริ่มต้น
+                document.getElementById('visit-counter').textContent = 'สถานะ: ออนไลน์';
+            }
+        });
+    </script>
+</body>
+</html>
